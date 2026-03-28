@@ -7,9 +7,10 @@ import {ZerachOToken} from "src/ZerachOToken.sol";
 contract DeployZKoToken is Script {
     uint256 public constant INITIAL_SUPPLY = 1000 ether;
 
-    function run() external {
+    function run() external returns (ZerachOToken) {
         vm.startBroadcast();
-        new ZerachOToken(INITIAL_SUPPLY);
+        ZerachOToken token = new ZerachOToken(INITIAL_SUPPLY);
         vm.stopBroadcast();
+        return token;
     }
 }

@@ -2,28 +2,40 @@
 pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
-import {DeployZKoToken} from "script/DeployZKoToken.s.sol";
 import {ZerachOToken} from "src/ZerachOToken.sol";
 
-contract zkoTokenTest is Test {
-    ZerachOToken public zkotoken;
-    DeployZKoToken public deployzkotoken;
+contract ZerachOTokenTest is Test {
+    ZerachOToken public zkoToken;
 
     address bob = makeAddr("bob");
-    address alice = makeAddr("alice");
-
-    uint256 public constant STARTING_BALANCE = 100 ether;
+    uint256 public constant INITIAL_SUPPLY = 1000 ether;
+    uint256 public constant TRANSFER_AMOUNT = 100 ether;
 
     function setUp() public {
-        deployzkotoken = new DeployZKoToken();
-        zkotoken = new ZerachOToken(STARTING_BALANCE);
-
-        vm.prank(address(msg.sender));
-        zkotoken.transfer(bob, STARTING_BALANCE);
+        zkoToken = new ZerachOToken(INITIAL_SUPPLY);
     }
 
-    function testBobBalances() public {
-        assertEq(STARTING_BALANCE, zkotoken.balanceOf(bob));
+    function testTokenNameIsCorrect() public view {
+        assertEq(zkoToken.name(), "zerachToken");
+    }
+
+    function testTokenSymbolIsCorrect() public view {
+        assertEq(zkoToken.symbol(), "ZK");
+    }
+
+    function testInitialSupplyIsMintedToDeployer() public view {
+        assertEq(zkoToken.totalSupply(), INITIAL_SUPPLY);
+        assertEq(zkoToken.balanceOf(address(this)), INITIAL_SUPPLY);
+    }
+
+    function testBobStartsWithZeroBalance() public view {
+        assertEq(zkoToken.balanceOf(bob), 0);
+    }
+
+    function testTransferWorks() public {
+        zkoToken.transfer(bob, TRANSFER_AMOUNT);
+
+        assertEq(zkoToken.balanceOf(bob), TRANSFER_AMOUNT);
+        assertEq(zkoToken.balanceOf(address(this)), INITIAL_SUPPLY - TRANSFER_AMOUNT);
     }
 }
-
