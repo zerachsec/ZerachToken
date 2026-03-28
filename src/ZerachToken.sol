@@ -32,6 +32,6 @@ contract ZerachToken {
         uint256 previousBalances = balanceOf(msg.sender) + balanceOf(_to);
         balances[msg.sender] -= _amount;
         balances[_to] += _amount;
-        require(balanceOf(msg.sender) + balanceOf(to) == previousBalances);
+        require(balanceOf(msg.sender) + balanceOf(_to) == previousBalances);
     }
 }
